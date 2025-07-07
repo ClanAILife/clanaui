@@ -87,6 +87,25 @@
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    .boton-cta {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.8rem 1.2rem;
+  background-color: var(--caramelo);
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 1rem;
+  text-decoration: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: background-color 0.3s ease;
+}
+
+.boton-cta:hover {
+  background-color: var(--verde-espuma);
+}
+
   </style>
 </head>
 <body>
@@ -148,7 +167,7 @@
       // Mostrar mensaje del usuario
       const userBubble = document.createElement('div');
       userBubble.className = 'chat-message user';
-      userBubble.innerText = `👋 Hola, soy ${alias} y estoy lista para iniciar el nivel ${nivel}.`;
+      userBubble.innerText = `👋 Hola, soy ${alias} y estoy list@ para iniciar el nivel ${nivel}.`;
       container.appendChild(userBubble);
 
       // Enviar datos al webhook
@@ -160,6 +179,16 @@
       aiBubble.className = 'chat-message';
       aiBubble.innerText = data.message?.content || '✨ Recibido. Te acompañaré en este camino.';
       container.appendChild(aiBubble);
+
+      // Mostrar botón de pago si viene una CTA en la respuesta
+  if (data.message?.cta) {
+    const btn = document.createElement('a');
+    btn.href = data.message.cta.url;
+    btn.innerText = data.message.cta.text;
+    btn.className = 'boton-cta';
+    btn.target = '_blank';
+    container.appendChild(btn);
+  }
 
       // Scroll automático hacia abajo
       container.scrollTop = container.scrollHeight;
