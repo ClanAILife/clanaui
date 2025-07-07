@@ -1,18 +1,10 @@
-<!--
-  🧠 ClanAI - Interfaz de Producción v1
-  HTML + CSS + JavaScript (Frontend) + n8n (Backend)
-  Esta interfaz está pensada para ofrecer una experiencia emocionalmente inmersiva de coaching con IA.
-  Requiere conexión a webhook n8n que recibe alias, email, nivel y devuelve respuesta IA.
--->
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ClanAI - Coach IA Emocional</title>
-  <!-- Tipografía moderna y suave -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
   <style>
     :root {
       --marfil: #EEE0C2;
@@ -83,47 +75,42 @@
       background-color: var(--caramelo);
     }
 
+    .boton-cta {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.8rem 1.2rem;
+      background-color: var(--caramelo);
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      border-radius: 1rem;
+      text-decoration: none;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: background-color 0.3s ease;
+    }
+
+    .boton-cta:hover {
+      background-color: var(--verde-espuma);
+    }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
-    .boton-cta {
-  display: inline-block;
-  margin-top: 1rem;
-  padding: 0.8rem 1.2rem;
-  background-color: var(--caramelo);
-  color: white;
-  font-weight: bold;
-  text-align: center;
-  border-radius: 1rem;
-  text-decoration: none;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  transition: background-color 0.3s ease;
-}
-
-.boton-cta:hover {
-  background-color: var(--verde-espuma);
-}
-
   </style>
 </head>
 <body>
   <div class="chat-container">
-    <!-- Mensaje inicial -->
     <div class="chat-message">
       ✨ Hola, soy <strong>ClanAI</strong>, tu coach emocional impulsado por IA. Vamos a comenzar tu transformación. ¿Cómo quieres que te llame?
     </div>
 
-    <!-- Entrada de alias -->
     <label for="alias">📝 Tu nombre o apodo</label>
-    <input type="text" id="alias" placeholder="Ej: Angie" required>
+    <input type="text" id="alias" placeholder="Ej: Angie" required/>
 
-    <!-- Entrada de correo -->
     <label for="email">📧 Tu correo electrónico</label>
-    <input type="email" id="email" placeholder="Ej: angie@clanai.com" required>
+    <input type="email" id="email" placeholder="Ej: angie@clanai.com" required/>
 
-    <!-- Selección de nivel -->
     <label for="nivel">🌱 Elige tu nivel de experiencia</label>
     <select id="nivel">
       <option value="Explorador">🧡 Explorador</option>
@@ -131,77 +118,92 @@
       <option value="Inmersivo">🧠 Inmersivo</option>
     </select>
 
-    <!-- Botón para iniciar -->
     <button onclick="enviarDatos()">🚀 Iniciar viaje</button>
   </div>
 
-<script>
-  // Función para enviar datos a n8n y mostrar mensajes
-  async function enviarDatos() {
-    const alias = document.getElementById('alias').value;
-    const email = document.getElementById('email').value;
-    const nivel = document.getElementById('nivel').value;
+  <script>
+    async function enviarDatos() {
+      const alias = document.getElementById('alias').value;
+      const email = document.getElementById('email').value;
+      const nivel = document.getElementById('nivel').value;
 
-    if (!alias || !email) {
-      alert("Por favor completa tu nombre y correo electrónico.");
-      return;
+      if (!alias || !email) {
+        alert("Por favor completa tu nombre y correo electrónico.");
+        return;
+      }
+
+      const webhookUrl = `https://engcastaai.app.n8n.cloud/webhook/clanai-session-start?alias=${encodeURIComponent(alias)}&email=${encodeURIComponent(email)}&nivel=${encodeURIComponent(nivel)}`;
+
+      try {
+        const container = document.querySelector('.chat-container');
+
+        const userBubble = document.createElement('div');
+        userBubble.className = 'chat-message user';
+        userBubble.innerText = `👋 Hola, soy ${alias} y estoy list@ para iniciar el nivel ${nivel}.`;
+        container.appendChild(userBubble);
+
+        const res = await fetch(webhookUrl);
+        const data = await res.json();
+
+        const aiBubble = document.createElement('div');
+        aiBubble.className = 'chat-message';
+        aiBubble.innerText = data.message?.content || '✨ Recibido. Te acompañaré en este camino.';
+        container.appendChild(aiBubble);
+
+        if (data.message?.cta) {
+          const btn = document.createElement('a');
+          btn.href = data.message.cta.url;
+          btn.innerText = data.message.cta.text;
+          btn.className = 'boton-cta';
+          btn.target = '_blank';
+          container.appendChild(btn);
+        }
+
+        container.scrollTop = container.scrollHeight;
+
+        // --- Bloque de envío del resumen por correo ---
+        const sessions_id = data.sessions_id || "";
+
+        const siBtn = document.createElement("button");
+        siBtn.innerText = "✅ Sí, envíame el resumen";
+        siBtn.style.marginTop = "1rem";
+        siBtn.onclick = async () => {
+          const urlResumen = `https://engcastaai.app.n8n.cloud/webhook/clanai-enviar-resumen?email=${encodeURIComponent(email)}&sessions_id=${encodeURIComponent(sessions_id)}`;
+          try {
+            const resResumen = await fetch(urlResumen);
+            const resumenData = await resResumen.json();
+
+            const resumenBubble = document.createElement("div");
+            resumenBubble.className = "chat-message";
+            resumenBubble.innerText = resumenData.message?.content || "📬 Resumen enviado con éxito.";
+            container.appendChild(resumenBubble);
+            container.scrollTop = container.scrollHeight;
+          } catch (error) {
+            alert("❌ Error al enviar el resumen por correo.");
+            console.error(error);
+          }
+        };
+
+        const noBtn = document.createElement("button");
+        noBtn.innerText = "❌ No, gracias";
+        noBtn.style.marginTop = "1rem";
+        noBtn.onclick = () => {
+          const msg = document.createElement("div");
+          msg.className = "chat-message";
+          msg.innerText = "👌 Perfecto. Puedes acceder al resumen más adelante si lo necesitas.";
+          container.appendChild(msg);
+          container.scrollTop = container.scrollHeight;
+        };
+
+        container.appendChild(siBtn);
+        container.appendChild(noBtn);
+
+      } catch (error) {
+        alert("⚠️ Error al conectar con ClanAI Coach. Intenta más tarde.");
+        console.error(error);
+      }
     }
-
-    const webhookUrl = `https://engcastaai.app.n8n.cloud/webhook/clanai-session-start?alias=${encodeURIComponent(alias)}&email=${encodeURIComponent(email)}&nivel=${encodeURIComponent(nivel)}`;
-
-    try {
-      const container = document.querySelector('.chat-container');
-
-      // 💬 Versión anterior por si acaso
-      /*
-      const res = await fetch(webhookUrl);
-      const data = await res.json();
-      const message = document.createElement('div');
-      message.className = 'chat-message';
-      message.innerText = data.respuestaIA || '✨ Recibido. Te acompañaré en este camino.';
-      container.appendChild(message);
-      */
-
-      // ✅ NUEVA VERSIÓN MODERNA Y CON ESTILO
-
-      // Mostrar mensaje del usuario
-      const userBubble = document.createElement('div');
-      userBubble.className = 'chat-message user';
-      userBubble.innerText = `👋 Hola, soy ${alias} y estoy list@ para iniciar el nivel ${nivel}.`;
-      container.appendChild(userBubble);
-
-      // Enviar datos al webhook
-      const res = await fetch(webhookUrl);
-      const data = await res.json();
-
-      // Mostrar respuesta del coach IA
-      const aiBubble = document.createElement('div');
-      aiBubble.className = 'chat-message';
-      aiBubble.innerText = data.message?.content || '✨ Recibido. Te acompañaré en este camino.';
-      container.appendChild(aiBubble);
-
-      // Mostrar botón de pago si viene una CTA en la respuesta
-  if (data.message?.cta) {
-    const btn = document.createElement('a');
-    btn.href = data.message.cta.url;
-    btn.innerText = data.message.cta.text;
-    btn.className = 'boton-cta';
-    btn.target = '_blank';
-    container.appendChild(btn);
-  }
-
-      // Scroll automático hacia abajo
-      container.scrollTop = container.scrollHeight;
-
-    } catch (error) {
-      alert("⚠️ Error al conectar con ClanAI Coach. Intenta más tarde.");
-      console.error(error);
-    }
-  }
-</script>
-
-
-  
-  
+  </script>
 </body>
 </html>
+
