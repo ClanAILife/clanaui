@@ -142,6 +142,8 @@
         userBubble.innerText = `👋 Hola, soy ${alias} y estoy list@ para iniciar el nivel ${nivel}.`;
         container.appendChild(userBubble);
 
+        console.log("Alias:", alias, "Email:", email, "Nivel:", nivel);
+
         const res = await fetch(webhookUrl);
         const data = await res.json();
 
@@ -204,6 +206,12 @@
       }
     }
   </script>
+  window.onload = () => {
+  document.getElementById('alias').value = '';
+  document.getElementById('email').value = '';
+  document.getElementById('nivel').value = 'Explorador';
+};
+
 </body>
 </html>
 
