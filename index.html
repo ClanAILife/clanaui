@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ClanAI - Coach IA Emocional</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
       --marfil: #EEE0C2;
@@ -36,6 +36,8 @@
       display: flex;
       flex-direction: column;
       gap: 1rem;
+      overflow-y: auto;
+      max-height: 90vh;
     }
 
     .chat-message {
@@ -51,22 +53,25 @@
       align-self: flex-end;
     }
 
-    label {
-      font-weight: 600;
+    .chat-input {
+      display: flex;
+      gap: 0.5rem;
     }
 
-    input, select, button {
+    .chat-input input {
+      flex: 1;
       padding: 0.8rem;
       border-radius: 1rem;
       border: none;
       font-size: 1rem;
-      margin-top: 0.3rem;
-      width: 100%;
     }
 
-    button {
+    .chat-input button {
       background-color: var(--menta-acuatico);
       color: white;
+      border: none;
+      border-radius: 1rem;
+      padding: 0.8rem 1rem;
       font-weight: bold;
       cursor: pointer;
     }
@@ -75,22 +80,28 @@
       background-color: var(--caramelo);
     }
 
-    .boton-cta {
-      display: inline-block;
-      margin-top: 1rem;
-      padding: 0.8rem 1.2rem;
-      background-color: var(--caramelo);
-      color: white;
-      font-weight: bold;
-      text-align: center;
-      border-radius: 1rem;
-      text-decoration: none;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      transition: background-color 0.3s ease;
+    .formulario {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
     }
 
-    .boton-cta:hover {
-      background-color: var(--verde-espuma);
+    select, input {
+      padding: 0.8rem;
+      border-radius: 1rem;
+      border: none;
+      font-size: 1rem;
+      width: 100%;
+    }
+
+    .boton-cta {
+      background-color: var(--caramelo);
+      color: white;
+      border: none;
+      padding: 0.8rem 1.2rem;
+      border-radius: 1rem;
+      font-weight: bold;
+      cursor: pointer;
     }
 
     @keyframes fadeIn {
@@ -100,115 +111,115 @@
   </style>
 </head>
 <body>
-  <div class="chat-container">
-    <div class="chat-message">
-      ✨ Hola, soy <strong>ClanAI</strong>, tu coach emocional impulsado por IA. Vamos a comenzar tu transformación. ¿Cómo quieres que te llame?
+  <div class="chat-container" id="chat">
+    <div class="chat-message">✨ Hola, soy <strong>ClanAI</strong>, tu coach emocional impulsado por IA. ¿Cómo quieres que te llame?</div>
+    <div class="formulario">
+      <input type="text" id="alias" placeholder="📝 Tu nombre o apodo" required />
+      <input type="email" id="email" placeholder="📧 Tu correo electrónico" required />
+      <select id="nivel">
+        <option value="Explorador">🧡 Explorador</option>
+        <option value="Visionario">👁 Visionario</option>
+        <option value="Inmersivo">🧠 Inmersivo</option>
+      </select>
+      <button onclick="iniciarConversacion()">🚀 Iniciar viaje</button>
     </div>
-
-    <label for="alias">📝 Tu nombre o apodo</label>
-    <input type="text" id="alias" placeholder="Ej: Angie" required autocomplete="off"/>
-
-    <label for="email">📧 Tu correo electrónico</label>
-    <input type="email" id="email" placeholder="Ej: angie@clanai.com" required/>
-
-    <label for="nivel">🌱 Elige tu nivel de experiencia</label>
-    <select id="nivel">
-      <option value="Explorador">🧡 Explorador</option>
-      <option value="Visionario">👁 Visionario</option>
-      <option value="Inmersivo">🧠 Inmersivo</option>
-    </select>
-
-    <button onclick="enviarDatos()">🚀 Iniciar viaje</button>
   </div>
 
   <script>
-    async function enviarDatos() {
-      const alias = document.getElementById('alias').value;
-      const email = document.getElementById('email').value;
-      const nivel = document.getElementById('nivel').value;
+    let paso = 0;
+    let aliasGlobal = '';
+    let emailGlobal = '';
+    let nivelGlobal = '';
 
-      if (!alias || !email) {
-        alert("Por favor completa tu nombre y correo electrónico.");
+    async function iniciarConversacion() {
+      aliasGlobal = document.getElementById('alias').value;
+      emailGlobal = document.getElementById('email').value;
+      nivelGlobal = document.getElementById('nivel').value;
+
+      if (!aliasGlobal || !emailGlobal) {
+        alert("Por favor completa tu nombre y correo.");
         return;
       }
 
-      const webhookUrl = `https://engcastaai.app.n8n.cloud/webhook/clanai-session-start?alias=${encodeURIComponent(alias)}&email=${encodeURIComponent(email)}&nivel=${encodeURIComponent(nivel)}`;
+      const chat = document.getElementById('chat');
+      document.querySelector('.formulario').remove();
 
-      try {
-        const container = document.querySelector('.chat-container');
+      agregarMensaje(`👋 Hola, soy ${aliasGlobal} y estoy list@ para iniciar el nivel ${nivelGlobal}.`, 'user');
 
-        const userBubble = document.createElement('div');
-        userBubble.className = 'chat-message user';
-        userBubble.innerText = `👋 Hola, soy ${alias} y estoy list@ para iniciar el nivel ${nivel}.`;
-        container.appendChild(userBubble);
+      await siguientePaso('');
+    }
 
-        console.log("Alias:", alias, "Email:", email, "Nivel:", nivel);
+    async function siguientePaso(respuestaUsuario) {
+      const webhookUrl = `https://engcastaai.app.n8n.cloud/webhook/clanai-session-start?alias=${encodeURIComponent(aliasGlobal)}&email=${encodeURIComponent(emailGlobal)}&nivel=${encodeURIComponent(nivelGlobal)}&mensaje=${encodeURIComponent(respuestaUsuario)}&paso=${paso}`;
 
-        const res = await fetch(webhookUrl);
-        const data = await res.json();
+      const res = await fetch(webhookUrl);
+      const data = await res.json();
 
-        const aiBubble = document.createElement('div');
-        aiBubble.className = 'chat-message';
-        aiBubble.innerText = data.message?.content || '✨ Recibido. Te acompañaré en este camino.';
-        container.appendChild(aiBubble);
+      const respuestaIA = data.message?.content || '✨ Recibido. Te acompañaré en este camino.';
+      agregarMensaje(respuestaIA);
 
-        if (data.message?.cta) {
-          const btn = document.createElement('a');
-          btn.href = data.message.cta.url;
-          btn.innerText = data.message.cta.text;
-          btn.className = 'boton-cta';
-          btn.target = '_blank';
-          container.appendChild(btn);
-        }
-
-        container.scrollTop = container.scrollHeight;
-
-        // --- Bloque de envío del resumen por correo ---
-        const sessions_id = data.sessions_id || "";
-
-        const siBtn = document.createElement("button");
-        siBtn.innerText = "✅ Sí, envíame el resumen";
-        siBtn.style.marginTop = "1rem";
-        siBtn.onclick = async () => {
-          const urlResumen = `https://engcastaai.app.n8n.cloud/webhook/clanai-enviar-resumen?email=${encodeURIComponent(email)}&sessions_id=${encodeURIComponent(sessions_id)}`;
-          try {
-            const resResumen = await fetch(urlResumen);
-            const resumenData = await resResumen.json();
-
-            const resumenBubble = document.createElement("div");
-            resumenBubble.className = "chat-message";
-            resumenBubble.innerText = resumenData.message?.content || "📬 Resumen enviado con éxito.";
-            container.appendChild(resumenBubble);
-            container.scrollTop = container.scrollHeight;
-          } catch (error) {
-            alert("❌ Error al enviar el resumen por correo.");
-            console.error(error);
-          }
-        };
-
-        const noBtn = document.createElement("button");
-        noBtn.innerText = "❌ No, gracias";
-        noBtn.style.marginTop = "1rem";
-        noBtn.onclick = () => {
-          const msg = document.createElement("div");
-          msg.className = "chat-message";
-          msg.innerText = "👌 Perfecto. Puedes acceder al resumen más adelante si lo necesitas.";
-          container.appendChild(msg);
-          container.scrollTop = container.scrollHeight;
-        };
-
-        container.appendChild(siBtn);
-        container.appendChild(noBtn);
-
-      } catch (error) {
-        alert("⚠️ Error al conectar con ClanAI Coach. Intenta más tarde.");
-        console.error(error);
+      if (data.sesionTerminada) {
+        mostrarBotonesResumen(data);
+      } else {
+        crearInputParaRespuesta();
+        paso += 1;
       }
     }
-   
-  </script>
- 
 
+    function agregarMensaje(texto, tipo = 'bot') {
+      const chat = document.getElementById('chat');
+      const msg = document.createElement('div');
+      msg.className = `chat-message ${tipo === 'user' ? 'user' : ''}`;
+      msg.innerText = texto;
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function crearInputParaRespuesta() {
+      const chat = document.getElementById('chat');
+      const inputDiv = document.createElement('div');
+      inputDiv.className = 'chat-input';
+      inputDiv.innerHTML = `
+        <input type="text" id="respuesta" placeholder="Escribe tu respuesta..." />
+        <button onclick="procesarRespuesta()">Enviar</button>
+      `;
+      chat.appendChild(inputDiv);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function procesarRespuesta() {
+      const valor = document.getElementById('respuesta').value;
+      if (valor.trim() === '') return;
+      agregarMensaje(valor, 'user');
+      document.querySelector('.chat-input').remove();
+      siguientePaso(valor);
+    }
+
+    function mostrarBotonesResumen(data) {
+      const chat = document.getElementById('chat');
+      const div = document.createElement('div');
+      div.innerHTML = `
+        <button class="boton-cta" onclick="enviarResumen()">✅ Sí, envíame el resumen</button>
+        <button class="boton-cta" onclick="noResumen()">❌ No, gracias</button>
+      `;
+      chat.appendChild(div);
+    }
+
+    async function enviarResumen() {
+      await fetch('https://engcastaai.app.n8n.cloud/webhook/clanai-enviar-resumen', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailGlobal })
+      });
+
+      agregarMensaje('📬 Tu resumen emocional ha sido enviado. Gracias por vivir este momento conmigo 💛');
+    }
+
+    function noResumen() {
+      agregarMensaje('👌 Perfecto. Puedes acceder al resumen más adelante si lo necesitas.');
+    }
+  </script>
 </body>
 </html>
+
 
