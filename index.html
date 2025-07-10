@@ -2,224 +2,160 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ClanAI - Coach IA Emocional</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClanAI - Bienvenida</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --marfil: #EEE0C2;
-      --caramelo: #C8945B;
-      --arena-rosada: #E3CEC0;
-      --verde-espuma: #B6D3C6;
-      --menta-acuatico: #86C1AF;
-      --texto: #5C3B1E;
+      --color-fondo: #fffaf3;
+      --color-primario: #c2a27e;
+      --color-secundario: #4a4a4a;
+      --color-acento: #739f98;
     }
 
     body {
       margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background-color: var(--marfil);
-      color: var(--texto);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--color-fondo);
+      color: var(--color-secundario);
     }
 
-    .chat-container {
-      background: white;
-      border-radius: 2rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      max-width: 400px;
-      width: 100%;
+    header {
+      background: var(--color-primario);
       padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      overflow-y: auto;
-      max-height: 90vh;
-    }
-
-    .chat-message {
-      background-color: var(--arena-rosada);
-      border-radius: 1.5rem;
-      padding: 1rem;
-      max-width: 90%;
-      animation: fadeIn 0.6s ease-in-out;
-    }
-
-    .chat-message.user {
-      background-color: var(--verde-espuma);
-      align-self: flex-end;
-    }
-
-    .chat-input {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .chat-input input {
-      flex: 1;
-      padding: 0.8rem;
-      border-radius: 1rem;
-      border: none;
-      font-size: 1rem;
-    }
-
-    .chat-input button {
-      background-color: var(--menta-acuatico);
+      text-align: center;
       color: white;
-      border: none;
-      border-radius: 1rem;
-      padding: 0.8rem 1rem;
-      font-weight: bold;
-      cursor: pointer;
     }
 
-    button:hover {
-      background-color: var(--caramelo);
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      margin: 0;
     }
 
-    .formulario {
+    .intro {
+      max-width: 800px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+      font-size: 1.1rem;
+      line-height: 1.8;
+    }
+
+    .niveles {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 2rem;
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
     }
 
-    select, input {
-      padding: 0.8rem;
-      border-radius: 1rem;
-      border: none;
-      font-size: 1rem;
+    .nivel {
+      background: white;
+      border-left: 5px solid var(--color-acento);
+      padding: 1.5rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      border-radius: 8px;
+    }
+
+    .nivel h2 {
+      margin-top: 0;
+      color: var(--color-acento);
+      font-family: 'Playfair Display', serif;
+    }
+
+    .chatbox {
+      max-width: 700px;
+      margin: 3rem auto;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 0 30px rgba(0,0,0,0.05);
+    }
+
+    .chatbox label {
+      font-weight: 600;
+      margin-bottom: .5rem;
+      display: block;
+    }
+
+    .chatbox input[type="text"] {
       width: 100%;
+      padding: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      margin-bottom: 1rem;
     }
 
-    .boton-cta {
-      background-color: var(--caramelo);
+    .chatbox button {
+      background-color: var(--color-acento);
       color: white;
       border: none;
-      padding: 0.8rem 1.2rem;
-      border-radius: 1rem;
-      font-weight: bold;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      border-radius: 6px;
       cursor: pointer;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.9rem;
+      color: #888;
     }
   </style>
 </head>
 <body>
-  <div class="chat-container" id="chat">
-    <div class="chat-message">✨ Hola, soy <strong>ClanAI</strong>, tu coach emocional impulsado por IA. ¿Cómo quieres que te llame?</div>
-    <div class="formulario">
-      <input type="text" id="alias" placeholder="📝 Tu nombre o apodo" required />
-      <input type="email" id="email" placeholder="📧 Tu correo electrónico" required />
-      <select id="nivel">
-        <option value="Explorador">🧡 Explorador</option>
-        <option value="Visionario">👁 Visionario</option>
-        <option value="Inmersivo">🧠 Inmersivo</option>
-      </select>
-      <button class="boton-cta" onclick="iniciarConversacion()">🚀 Iniciar viaje</button>
+  <header>
+    <h1>Bienvenida a ClanAI</h1>
+  </header>
+
+  <section class="intro">
+    <p>
+      Este no es solo un sitio web. Es un espacio vivo, creado con cuidado y propósito para acompañarte a descubrir, expandir y transformar lo que ya habita en ti. 
+      Creemos que cada persona merece un lugar seguro donde explorar su mente, conocerse mejor y diseñar una versión de sí misma más consciente, libre y poderosa.
+    </p>
+    <p>
+      Por eso ClanAI combina coaching transformacional, PNL, neurociencia emocional y herramientas de IA para guiarte, paso a paso, hacia lo que hoy sueñas ser.
+    </p>
+  </section>
+
+  <section class="niveles">
+    <div class="nivel">
+      <h2>🌟 Explorador</h2>
+      <p>Una experiencia para abrir la puerta: preguntas poderosas, reflexiones y un pequeño entregable. Ideal para dar tu primer paso hacia adentro.</p>
     </div>
-  </div>
+    <div class="nivel">
+      <h2>👁️ Visionario</h2>
+      <p>Un nivel intermedio para profundizar: conectar con tu yo futuro, clarificar tu camino y empezar a diseñarlo.</p>
+    </div>
+    <div class="nivel">
+      <h2>🌿 Inmersivo</h2>
+      <p>Un proceso de 8 sesiones para transformar en serio. Con acompañamiento, plan de acción, seguimiento y cuidado real.</p>
+    </div>
+  </section>
 
-  <script>
-    let paso = 0;
-    let aliasGlobal = '';
-    let emailGlobal = '';
-    let nivelGlobal = '';
+  <section class="chatbox">
+    <form id="formClanAI">
+      <label for="nombreUsuario">¿Cómo deseas que te llame?</label>
+      <input type="text" name="nombreUsuario" id="nombreUsuario" placeholder="Escribe aquí..." required />
 
-    async function iniciarConversacion() {
-      aliasGlobal = document.getElementById('alias').value;
-      emailGlobal = document.getElementById('email').value;
-      nivelGlobal = document.getElementById('nivel').value;
+      <label for="estadoInicial">Si pudieras ponerle palabras a cómo llegas hoy, ¿cuáles serían?</label>
+      <input type="text" name="estadoInicial" id="estadoInicial" placeholder="Me siento..." />
 
-      if (!aliasGlobal || !emailGlobal) {
-        alert("Por favor completa tu nombre y correo.");
-        return;
-      }
+      <label for="sintomaCorporal">¿Dónde en tu cuerpo sientes eso?</label>
+      <input type="text" name="sintomaCorporal" id="sintomaCorporal" placeholder="En el pecho..." />
 
-      const chat = document.getElementById('chat');
-      document.querySelector('.formulario').remove();
+      <label for="mensajeSimbolo">Imagina que ese símbolo pudiera hablarte... ¿Qué te diría?</label>
+      <input type="text" name="mensajeSimbolo" id="mensajeSimbolo" placeholder="Escribe lo que te diga tu cuerpo..." />
 
-      agregarMensaje(`👋 Hola, soy ${aliasGlobal} y estoy list@ para iniciar el nivel ${nivelGlobal}.`, 'user');
+      <button type="submit">Comenzar viaje</button>
+    </form>
+  </section>
 
-      await siguientePaso('');
-    }
-
-    async function siguientePaso(respuestaUsuario) {
-      const webhookUrl = `https://engcastaai.app.n8n.cloud/webhook/clanai-session-start?alias=${encodeURIComponent(aliasGlobal)}&email=${encodeURIComponent(emailGlobal)}&nivel=${encodeURIComponent(nivelGlobal)}&mensaje=${encodeURIComponent(respuestaUsuario)}&paso=${paso}`;
-
-      const res = await fetch(webhookUrl);
-      const data = await res.json();
-
-      const respuestaIA = data.message?.content || '✨ Recibido. Te acompañaré en este camino.';
-      agregarMensaje(respuestaIA);
-
-      if (data.sesionTerminada) {
-        mostrarBotonesResumen(data);
-      } else {
-        crearInputParaRespuesta();
-        paso += 1;
-      }
-    }
-
-    function agregarMensaje(texto, tipo = 'bot') {
-      const chat = document.getElementById('chat');
-      const msg = document.createElement('div');
-      msg.className = `chat-message ${tipo === 'user' ? 'user' : ''}`;
-      msg.innerText = texto;
-      chat.appendChild(msg);
-      chat.scrollTop = chat.scrollHeight;
-    }
-
-    function crearInputParaRespuesta() {
-      const chat = document.getElementById('chat');
-      const inputDiv = document.createElement('div');
-      inputDiv.className = 'chat-input';
-      inputDiv.innerHTML = `
-        <input type="text" id="respuesta" placeholder="Escribe tu respuesta..." />
-        <button class="boton-cta" onclick="procesarRespuesta()">Enviar</button>
-      `;
-      chat.appendChild(inputDiv);
-      chat.scrollTop = chat.scrollHeight;
-    }
-
-    function procesarRespuesta() {
-      const valor = document.getElementById('respuesta').value;
-      if (valor.trim() === '') return;
-      agregarMensaje(valor, 'user');
-      document.querySelector('.chat-input').remove();
-      siguientePaso(valor);
-    }
-
-    function mostrarBotonesResumen(data) {
-      const chat = document.getElementById('chat');
-      const div = document.createElement('div');
-      div.innerHTML = `
-        <button class="boton-cta" onclick="enviarResumen()">✅ Sí, envíame el resumen</button>
-        <button class="boton-cta" onclick="noResumen()">❌ No, gracias</button>
-      `;
-      chat.appendChild(div);
-    }
-
-    async function enviarResumen() {
-      await fetch('https://engcastaai.app.n8n.cloud/webhook/clanai-enviar-resumen', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: emailGlobal })
-      });
-
-      agregarMensaje('📬 Tu resumen emocional ha sido enviado. Gracias por vivir este momento conmigo 💛');
-    }
-
-    function noResumen() {
-      agregarMensaje('👌 Perfecto. Puedes acceder al resumen más adelante si lo necesitas.');
-    }
-  </script>
+  <footer>
+    ClanAI · Un espacio para volver a ti. · 2025
+  </footer>
 </body>
 </html>
-
-
