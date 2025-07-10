@@ -1,101 +1,92 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ClanAI - Bienvenida</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClanAI - Tu espacio</title>
   <style>
-    :root {
-      --color-fondo: #fffaf3;
-      --color-primario: #c2a27e;
-      --color-secundario: #4a4a4a;
-      --color-acento: #739f98;
-    }
-
     body {
       margin: 0;
-      font-family: 'Inter', sans-serif;
-      background-color: var(--color-fondo);
-      color: var(--color-secundario);
+      font-family: Arial, sans-serif;
+      background-color: #fffaf3;
+      color: #333;
     }
 
     header {
-      background: var(--color-primario);
+      background-color: #c2a27e;
+      color: white;
       padding: 2rem;
       text-align: center;
-      color: white;
     }
 
     header h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2rem;
       margin: 0;
+      font-size: 2rem;
     }
 
     .intro {
       max-width: 800px;
-      margin: 3rem auto;
-      padding: 0 1.5rem;
-      font-size: 1.1rem;
-      line-height: 1.8;
-    }
-
-    .niveles {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      max-width: 900px;
       margin: 2rem auto;
-      padding: 0 1.5rem;
+      padding: 0 1rem;
+      line-height: 1.6;
     }
 
-    .nivel {
-      background: white;
-      border-left: 5px solid var(--color-acento);
+    .niveles-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+      margin: 2rem auto;
+      max-width: 1000px;
+    }
+
+    .nivel-card {
+      background-color: white;
+      border: 2px solid #739f98;
+      border-radius: 10px;
       padding: 1.5rem;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-      border-radius: 8px;
+      width: 280px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
     }
 
-    .nivel h2 {
+    .nivel-card h2 {
       margin-top: 0;
-      color: var(--color-acento);
-      font-family: 'Playfair Display', serif;
+      color: #739f98;
     }
 
-    .chatbox {
+    .nivel-card button {
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      background-color: #739f98;
+      color: white;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .chat-container {
       max-width: 700px;
       margin: 3rem auto;
-      background: white;
-      border-radius: 12px;
+      background-color: #ffffff;
       padding: 2rem;
+      border-radius: 12px;
       box-shadow: 0 0 30px rgba(0,0,0,0.05);
     }
 
-    .chatbox label {
-      font-weight: 600;
-      margin-bottom: .5rem;
+    .chat-container label {
       display: block;
+      margin: 1rem 0 0.5rem;
+      font-weight: bold;
     }
 
-    .chatbox input[type="text"] {
+    .chat-container input[type="text"] {
       width: 100%;
       padding: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 1rem;
-      margin-bottom: 1rem;
-    }
-
-    .chatbox button {
-      background-color: var(--color-acento);
-      color: white;
-      border: none;
-      padding: 1rem 2rem;
-      font-size: 1rem;
       border-radius: 6px;
-      cursor: pointer;
+      border: 1px solid #ccc;
+      margin-bottom: 1rem;
     }
 
     footer {
@@ -108,7 +99,7 @@
 </head>
 <body>
   <header>
-    <h1>Bienvenida a ClanAI</h1>
+    <h1>ClanAI</h1>
   </header>
 
   <section class="intro">
@@ -121,41 +112,48 @@
     </p>
   </section>
 
-  <section class="niveles">
-    <div class="nivel">
-      <h2>🌟 Explorador</h2>
-      <p>Una experiencia para abrir la puerta: preguntas poderosas, reflexiones y un pequeño entregable. Ideal para dar tu primer paso hacia adentro.</p>
-    </div>
-    <div class="nivel">
-      <h2>👁️ Visionario</h2>
-      <p>Un nivel intermedio para profundizar: conectar con tu yo futuro, clarificar tu camino y empezar a diseñarlo.</p>
-    </div>
-    <div class="nivel">
-      <h2>🌿 Inmersivo</h2>
-      <p>Un proceso de 8 sesiones para transformar en serio. Con acompañamiento, plan de acción, seguimiento y cuidado real.</p>
-    </div>
-  </section>
-
-  <section class="chatbox">
+  <section class="chat-container">
     <form id="formClanAI">
       <label for="nombreUsuario">¿Cómo deseas que te llame?</label>
-      <input type="text" name="nombreUsuario" id="nombreUsuario" placeholder="Escribe aquí..." required />
+      <input type="text" name="nombreUsuario" id="nombreUsuario" required />
 
-      <label for="estadoInicial">Si pudieras ponerle palabras a cómo llegas hoy, ¿cuáles serían?</label>
-      <input type="text" name="estadoInicial" id="estadoInicial" placeholder="Me siento..." />
+      <label for="emailUsuario">¿Cuál es tu correo electrónico?</label>
+      <input type="text" name="emailUsuario" id="emailUsuario" required />
 
-      <label for="sintomaCorporal">¿Dónde en tu cuerpo sientes eso?</label>
-      <input type="text" name="sintomaCorporal" id="sintomaCorporal" placeholder="En el pecho..." />
+      <label for="nivelSeleccionado">Selecciona tu nivel:</label>
+      <input type="text" name="nivelSeleccionado" id="nivelSeleccionado" placeholder="explorador, visionario o inmersivo" required />
 
-      <label for="mensajeSimbolo">Imagina que ese símbolo pudiera hablarte... ¿Qué te diría?</label>
-      <input type="text" name="mensajeSimbolo" id="mensajeSimbolo" placeholder="Escribe lo que te diga tu cuerpo..." />
-
-      <button type="submit">Comenzar viaje</button>
+      <button type="submit">Comenzar</button>
     </form>
   </section>
 
+  <section class="niveles-container">
+    <div class="nivel-card">
+      <h2>🌟 Explorador</h2>
+      <p>Descubre nuevos caminos. Ideal para dar tu primer paso hacia adentro.</p>
+      <button onclick="seleccionarNivel('explorador')">Elegir</button>
+    </div>
+    <div class="nivel-card">
+      <h2>👁️ Visionario</h2>
+      <p>Profundiza, conecta con tu yo futuro, clarifica tu camino.</p>
+      <button onclick="seleccionarNivel('visionario')">Elegir</button>
+    </div>
+    <div class="nivel-card">
+      <h2>🌿 Inmersivo</h2>
+      <p>Un proceso de 8 sesiones para transformar en serio. Con acompañamiento y plan de acción.</p>
+      <button onclick="seleccionarNivel('inmersivo')">Elegir</button>
+    </div>
+  </section>
+
   <footer>
-    ClanAI · Un espacio para volver a ti. · 2025
+    ClanAI · Un espacio para volver a ti · 2025
   </footer>
+
+  <script>
+    function seleccionarNivel(nivel) {
+      document.getElementById('nivelSeleccionado').value = nivel;
+    }
+  </script>
 </body>
 </html>
+
