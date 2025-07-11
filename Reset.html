@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resetear Usuario ClanAI</title>
+  <style>
+    body {
+      background-color: #f3f2ef;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.8rem;
+      margin-top: 1rem;
+      border-radius: 0.8rem;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 1rem;
+      background-color: #c8945b;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.2rem;
+      border-radius: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #mensaje {
+      margin-top: 1rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>🧹 Resetear datos de usuario ClanAI</h2>
+    <input type="email" id="email" placeholder="Correo electrónico del usuario" required />
+    <button onclick="resetearDatos()">Eliminar registros</button>
+    <div id="mensaje"></div>
+  </div>
+
+  <script>
+    async function resetearDatos() {
+      const email = document.getElementById('email').value;
+      const mensaje = document.getElementById('mensaje');
+
+      if (!email) {
+        mensaje.innerText = '⚠️ Por favor ingresa un correo válido.';
+        return;
+      }
+
+      mensaje.innerText = '⏳ Procesando...';
+
+      try {
+        const res = await fetch('https://engcastaai.app.n8n.cloud/webhook/delete-test-data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+
+        if (res.ok) {
+          mensaje.innerText = '✅ Registros eliminados correctamente.';
+        } else {
+          mensaje.innerText = '❌ Error al eliminar datos. Revisa la consola.';
+        }
+      } catch (err) {
+        console.error(err);
+        mensaje.innerText = '🚨 Error de red. Intenta nuevamente.';
+      }
+    }
+  </script>
+</body>
+</html>
