@@ -1,125 +1,99 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Resetear Usuario ClanAI</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resetear datos ClanAI</title>
   <style>
     body {
       background-color: #f3f2ef;
-      font-family: 'Arial', sans-serif;
+      font-family: Arial, sans-serif;
       display: flex;
-      justify-content: center;
-      align-items: center;
       height: 100vh;
-      margin: 0;
+      align-items: center;
+      justify-content: center;
     }
-
     .card {
-      background: white;
-      padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      max-width: 400px;
-      width: 100%;
+      background-color: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
       text-align: center;
+      max-width: 400px;
     }
-
-    input {
+    h2 {
+      font-size: 1.5rem;
+    }
+    input[type="email"] {
+      padding: 12px;
       width: 100%;
-      padding: 0.8rem;
-      margin-top: 1rem;
-      border-radius: 0.8rem;
+      margin: 12px 0;
+      border-radius: 8px;
       border: 1px solid #ccc;
       font-size: 1rem;
     }
-
     button {
-      margin-top: 1rem;
-      background-color: #c8945b;
+      background-color: #c0842b;
       color: white;
       border: none;
-      padding: 0.8rem 1.2rem;
-      border-radius: 1rem;
+      padding: 10px 20px;
+      border-radius: 12px;
       font-weight: bold;
       cursor: pointer;
+      margin-top: 10px;
     }
-
-    #mensaje {
-      margin-top: 1rem;
-      color: #555;
+    .message {
+      margin-top: 16px;
+      font-size: 0.9rem;
     }
-
-    .confirmacion {
-      text-align: center;
-      padding: 2rem;
-      animation: fadeIn 0.8s ease;
-    }
-
-    .confirmacion h1 {
-      font-size: 1.5rem;
-      color: #4caf50;
-    }
-
-    .confirmacion a {
-      display: inline-block;
-      margin-top: 1rem;
-      color: #c8945b;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    .error { color: #d32f2f; }
+    .success { color: #388e3c; }
   </style>
 </head>
 <body>
-  <div class="card" id="formulario">
-    <h2>🧹 Resetear datos de usuario ClanAI</h2>
-    <input type="email" id="email" placeholder="Correo electrónico del usuario" required />
+  <div class="card">
+    <h2>🧹 Resetear datos de usuario<br><strong>ClanAI</strong></h2>
+    <input type="email" id="email" placeholder="tucorreo@ejemplo.com" />
     <button onclick="resetearDatos()">Eliminar registros</button>
-    <div id="mensaje"></div>
-  </div>
-
-  <div class="confirmacion" id="confirmacion" style="display: none;">
-    <h1>✅ Datos eliminados correctamente</h1>
-    <p>Ahora puedes comenzar de nuevo tu experiencia con ClanAI.</p>
-    <a href="https://clanailife.github.io/clanaui/">Volver al inicio</a>
+    <div id="mensaje" class="message"></div>
   </div>
 
   <script>
     async function resetearDatos() {
-      const email = document.getElementById('email').value;
-      const mensaje = document.getElementById('mensaje');
+      const email = document.getElementById("email").value.trim();
+      const mensaje = document.getElementById("mensaje");
+      mensaje.textContent = "";
+      mensaje.className = "message";
 
       if (!email) {
-        mensaje.innerText = '⚠️ Por favor ingresa un correo válido.';
+        mensaje.textContent = "Por favor, ingresa un correo válido.";
+        mensaje.classList.add("error");
         return;
       }
 
-      mensaje.innerText = '⏳ Procesando...';
-
       try {
-        const res = await fetch('https://engcastaai.app.n8n.cloud/webhook/delete-test-data', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const respuesta = await fetch("https://n8n.serversnow.net/webhook/delete-test-data", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
           body: JSON.stringify({ email })
         });
 
-        if (res.ok) {
-          document.getElementById('formulario').style.display = 'none';
-          document.getElementById('confirmacion').style.display = 'block';
-        } else {
-          mensaje.innerText = '❌ Error al eliminar datos. Revisa la consola.';
+        if (!respuesta.ok) {
+          throw new Error("No se pudo completar la solicitud.");
         }
-      } catch (err) {
-        console.error(err);
-        mensaje.innerText = '🚨 Error de red. Intenta nuevamente.';
+
+        mensaje.textContent = "✅ Registros eliminados correctamente.";
+        mensaje.classList.add("success");
+      } catch (error) {
+        console.error("Error:", error);
+        mensaje.textContent = "❌ Error de red. Intenta nuevamente.";
+        mensaje.classList.add("error");
       }
     }
   </script>
 </body>
 </html>
+
 
