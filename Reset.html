@@ -49,14 +49,44 @@
       margin-top: 1rem;
       color: #555;
     }
+
+    .confirmacion {
+      text-align: center;
+      padding: 2rem;
+      animation: fadeIn 0.8s ease;
+    }
+
+    .confirmacion h1 {
+      font-size: 1.5rem;
+      color: #4caf50;
+    }
+
+    .confirmacion a {
+      display: inline-block;
+      margin-top: 1rem;
+      color: #c8945b;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
-  <div class="card">
+  <div class="card" id="formulario">
     <h2>🧹 Resetear datos de usuario ClanAI</h2>
     <input type="email" id="email" placeholder="Correo electrónico del usuario" required />
     <button onclick="resetearDatos()">Eliminar registros</button>
     <div id="mensaje"></div>
+  </div>
+
+  <div class="confirmacion" id="confirmacion" style="display: none;">
+    <h1>✅ Datos eliminados correctamente</h1>
+    <p>Ahora puedes comenzar de nuevo tu experiencia con ClanAI.</p>
+    <a href="https://clanailife.github.io/clanaui/">Volver al inicio</a>
   </div>
 
   <script>
@@ -79,7 +109,8 @@
         });
 
         if (res.ok) {
-          mensaje.innerText = '✅ Registros eliminados correctamente.';
+          document.getElementById('formulario').style.display = 'none';
+          document.getElementById('confirmacion').style.display = 'block';
         } else {
           mensaje.innerText = '❌ Error al eliminar datos. Revisa la consola.';
         }
@@ -91,3 +122,4 @@
   </script>
 </body>
 </html>
+
