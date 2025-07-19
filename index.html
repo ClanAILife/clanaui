@@ -19,10 +19,11 @@
       background: var(--fondo-gradiente);
       color: var(--color-texto);
       display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
       flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 2rem 1rem;
     }
 
     .chat-container {
@@ -30,13 +31,12 @@
       border-radius: 2rem;
       box-shadow: 0 10px 30px rgba(0,0,0,0.1);
       max-width: 420px;
-      width: 95%;
+      width: 100%;
       padding: 2rem;
       display: flex;
       flex-direction: column;
       gap: 1rem;
       overflow-y: auto;
-      max-height: 90vh;
     }
 
     .chat-message {
@@ -99,14 +99,18 @@
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    #versionInfo {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #555;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
   <div class="chat-container" id="chat">
-    <!-- ACG: Primer mensaje del bot -->
     <div class="chat-message">✨ Hola, soy <strong>ClanAI</strong>. ¿Cómo deseas que te llame?</div>
-
-    <!-- ACG: Formulario inicial para capturar datos del coachee -->
     <div class="formulario">
       <input type="text" id="alias" placeholder="📝 Tu nombre o apodo" required />
       <input type="email" id="email" placeholder="📧 Tu correo electrónico" required />
@@ -119,17 +123,17 @@
     </div>
   </div>
 
-  <!-- ACG: Información de versión con fecha y hora de carga automática -->
-  <div id="versionInfo" style="margin-top: 1rem; font-size: 0.8rem; color: #777;"></div>
+  <!-- ACG: Aquí se mostrará la versión dinámica -->
+  <div id="versionInfo"></div>
 
   <script>
-    // ACG: Variables globales para seguimiento
+    // ACG: Variables globales para mantener el estado
     let paso = 0;
     let aliasGlobal = '';
     let emailGlobal = '';
     let nivelGlobal = '';
 
-    // ACG: Al hacer clic en iniciar
+    // ACG: Iniciar conversación y validar campos
     async function iniciarConversacion() {
       aliasGlobal = document.getElementById('alias').value;
       emailGlobal = document.getElementById('email').value;
@@ -141,14 +145,12 @@
       }
 
       document.querySelector('.formulario').remove();
-
       agregarMensaje(`👋 Hola, soy ${aliasGlobal} y quiero empezar el nivel ${nivelGlobal}.`, 'user');
 
-      // ACG: Enviar sin mensaje aún
       await enviarAlBackend('');
     }
 
-    // ACG: Envío principal a n8n con alias, email, nivel, mensaje y paso
+    // ACG: Enviar datos y mensaje al backend vía webhook
     async function enviarAlBackend(respuestaUsuario) {
       const url = `https://n8n.serversnow.net/webhook/clanai-session-start?alias=${encodeURIComponent(aliasGlobal)}&email=${encodeURIComponent(emailGlobal)}&nivel=${encodeURIComponent(nivelGlobal)}&mensaje=${encodeURIComponent(respuestaUsuario)}&paso=${paso}`;
 
@@ -159,7 +161,6 @@
         const respuestaIA = data.message?.content || '✨ Estoy aquí para ti.';
         agregarMensaje(respuestaIA, 'bot');
 
-        // ACG: Control de flujo
         if (!data.sesionTerminada) {
           crearInputRespuesta();
           paso++;
@@ -171,7 +172,7 @@
       }
     }
 
-    // ACG: Mostrar mensaje en el chat
+    // ACG: Mostrar mensaje en la interfaz
     function agregarMensaje(texto, tipo = 'bot') {
       const chat = document.getElementById('chat');
       const msg = document.createElement('div');
@@ -181,7 +182,7 @@
       chat.scrollTop = chat.scrollHeight;
     }
 
-    // ACG: Crear input de respuesta del coachee
+    // ACG: Crear input para nueva respuesta del usuario
     function crearInputRespuesta() {
       const chat = document.getElementById('chat');
       const inputDiv = document.createElement('div');
@@ -194,7 +195,7 @@
       chat.scrollTop = chat.scrollHeight;
     }
 
-    // ACG: Manejar respuesta del coachee y reenviar
+    // ACG: Enviar la respuesta del usuario
     async function enviarRespuesta() {
       const valor = document.getElementById('respuesta').value;
       if (!valor.trim()) return;
@@ -204,10 +205,12 @@
       await enviarAlBackend(valor);
     }
 
-    // ACG: Mostrar versión dinámica
-    const versionInfo = document.getElementById("versionInfo");
-    const ahora = new Date();
-    versionInfo.innerText = `ClanAI v1.0.0 – Cargado: ${ahora.toLocaleDateString()} ${ahora.toLocaleTimeString()}`;
+    // ACG: Mostrar la versión actual al final del HTML
+    window.addEventListener('load', () => {
+      const ahora = new Date();
+      const versionInfo = document.getElementById("versionInfo");
+      versionInfo.innerText = `🧠 ClanAI v1.0.0 – Última carga: ${ahora.toLocaleDateString()} ${ahora.toLocaleTimeString()}`;
+    });
   </script>
 </body>
 </html>
