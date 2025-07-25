@@ -112,10 +112,11 @@
 </head>
 <body>
   <div class="chat-container" id="chat">
-    <!-- ACG: Mensaje de bienvenida -->
+
+    <!-- ACG: Mensaje de bienvenida inicial del chatbot -->
     <div class="chat-message">✨ Hola, soy <strong>ClanAI</strong>. ¿Cómo deseas que te llame?</div>
 
-    <!-- ACG: Formulario inicial para recoger nombre, email y nivel -->
+    <!-- ACG: Formulario para recoger datos del usuario (alias, email, nivel) -->
     <div class="formulario">
       <input type="text" id="alias" placeholder="📝 Tu nombre o apodo" required />
       <input type="email" id="email" placeholder="📧 Tu correo electrónico" required />
@@ -127,24 +128,26 @@
       <button onclick="iniciarConversacion()">🚀 Iniciar viaje</button>
     </div>
 
-    <!-- ACG: Pie de versión -->
+    <!-- ACG: Pie de página con información de versión y carga -->
     <div class="version-footer" id="versionInfo"></div>
   </div>
 
   <script>
-    // ACG: Variables globales de sesión
+    // ACG: Paso actual de la conversación (controlado desde backend)
     let paso = 0;
+
+    // ACG: Variables globales para los datos del formulario
     let aliasGlobal = '';
     let emailGlobal = '';
     let nivelGlobal = '';
 
-    // ACG: Mostrar fecha/hora y versión
+    // ACG: Mostrar versión y fecha de carga en pie de página
     const version = 'v1.0.0';
     const now = new Date();
     const fechaHora = now.toLocaleString();
     document.getElementById('versionInfo').innerText = `🧠 ClanAI ${version} – Última carga: ${fechaHora}`;
 
-    // ACG: Iniciar la conversación cuando el usuario llena el formulario
+    // ACG: Inicia la conversación una vez el formulario está completo
     async function iniciarConversacion() {
       aliasGlobal = document.getElementById('alias').value.trim();
       emailGlobal = document.getElementById('email').value.trim();
@@ -161,7 +164,7 @@
       await enviarAlBackend('');
     }
 
-    // ACG: Enviar mensaje al backend (n8n webhook)
+    // ACG: Enviar datos al webhook de n8n y recibir respuesta
     async function enviarAlBackend(respuestaUsuario) {
       const url = `https://n8n.serversnow.net/webhook/clanai-session-start?alias=${encodeURIComponent(aliasGlobal)}&email=${encodeURIComponent(emailGlobal)}&nivel=${encodeURIComponent(nivelGlobal)}&mensaje=${encodeURIComponent(respuestaUsuario)}&paso=${paso}`;
 
@@ -172,9 +175,10 @@
         const respuestaIA = data.message?.content || '✨ Estoy aquí para ti.';
         agregarMensaje(respuestaIA, 'bot');
 
+        // ACG: Si la sesión no ha terminado, continuar el flujo
         if (!data.sesionTerminada) {
+          paso = data.paso ?? paso; // ACG: Actualiza el paso desde backend si viene incluido
           crearInputRespuesta();
-          paso++;
         } else {
           agregarMensaje('🌀 Tu proceso ha terminado. Gracias por estar aquí.');
         }
@@ -183,7 +187,7 @@
       }
     }
 
-    // ACG: Agregar mensaje al chat
+    // ACG: Agrega un mensaje (bot o usuario) al chat visual
     function agregarMensaje(texto, tipo = 'bot') {
       const chat = document.getElementById('chat');
       const msg = document.createElement('div');
@@ -193,7 +197,7 @@
       chat.scrollTop = chat.scrollHeight;
     }
 
-    // ACG: Crear input para nueva respuesta del usuario
+    // ACG: Crea campo de entrada para nueva respuesta del usuario
     function crearInputRespuesta() {
       const chat = document.getElementById('chat');
       const inputDiv = document.createElement('div');
@@ -206,7 +210,7 @@
       chat.scrollTop = chat.scrollHeight;
     }
 
-    // ACG: Capturar texto del usuario y reenviar al backend
+    // ACG: Captura y envía la respuesta del usuario al backend
     async function enviarRespuesta() {
       const valor = document.getElementById('respuesta').value;
       if (!valor.trim()) return;
