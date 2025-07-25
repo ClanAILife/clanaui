@@ -48,7 +48,7 @@ async function enviarAlBackend(respuestaUsuario) {
       paso = data.paso ?? paso; // ACG: Actualiza el paso desde backend si viene incluido
       crearInputRespuesta();
     } else {
-      agregarMensaje('🌀 Tu proceso ha terminado. Gracias por estar aquí.');
+      agregarMensaje('🔀 Tu proceso ha terminado. Gracias por estar aquí.');
     }
   } catch (err) {
     console.error('Error en la conexión:', err);
@@ -77,19 +77,27 @@ function crearInputRespuesta() {
   `;
   chat.insertBefore(inputDiv, document.getElementById('versionInfo'));
   chat.scrollTop = chat.scrollHeight;
+
+  // Enviar con Enter
+  inputDiv.querySelector('input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      enviarRespuesta();
+    }
+  });
 }
 
-// ACG: Captura y envía la respuesta del usuario al backend
+// ACG: Funcionalidad para enviar la respuesta del usuario al backend
 async function enviarRespuesta() {
-  const valor = document.getElementById('respuesta').value;
-  if (!valor.trim()) return;
+  const input = document.getElementById('respuesta');
+  const respuesta = input.value.trim();
+  if (!respuesta) return;
 
-  agregarMensaje(valor, 'user');
-  document.querySelector('.chat-input').remove();
-  await enviarAlBackend(valor);
+  input.parentElement.remove();
+  agregarMensaje(respuesta, 'user');
+  await enviarAlBackend(respuesta);
 }
 
-  agregarMensaje(valor, 'user');
-  document.querySelector('.chat-input').remove();
-  await enviarAlBackend(valor);
-}
+// ACG: Exponer funciones globales usadas desde el HTML
+window.iniciarConversacion = iniciarConversacion;
+window.enviarRespuesta = enviarRespuesta;
