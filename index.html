@@ -172,14 +172,18 @@
         const res = await fetch(url);
         const data = await res.json();
 
-        const respuestaIA = data.message?.content || '✨ Estoy aquí para ti.';
+        const respuestaIA = data.message || '✨ Estoy aquí para ti.';
+        //const respuestaIA = data.message?.content || '✨ Estoy aquí para ti.';
+        console.log('Respuesta cruda del backend:', data);
+console.log('Mensaje IA:', data.message);
+
         agregarMensaje(respuestaIA, 'bot');
 
         // ACG: Si la sesión no ha terminado, continuar el flujo
         if (!data.sesionTerminada) {
           paso = data.paso ?? paso; // ACG: Actualiza el paso desde backend si viene incluido
           crearInputRespuesta();
-        } else {
+        } else {   
           agregarMensaje('🌀 Tu proceso ha terminado. Gracias por estar aquí.');
         }
       } catch (err) {
