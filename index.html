@@ -4,119 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ClanAI - Coach IA Emocional</title>
+  
+  <!-- Fuente y hoja de estilos -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --fondo-gradiente: linear-gradient(135deg, #d4e4dc, #f0e6d6);
-      --color-primario: #c8945b;
-      --color-secundario: #739f98;
-      --color-texto: #5c3b1e;
-    }
-
-    body {
-      margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background: var(--fondo-gradiente);
-      color: var(--color-texto);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      flex-direction: column;
-    }
-
-    .chat-container {
-      background: white;
-      border-radius: 2rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      max-width: 420px;
-      width: 95%;
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      overflow-y: auto;
-      max-height: 90vh;
-      position: relative;
-    }
-
-    .chat-message {
-      background-color: #f6ede2;
-      border-radius: 1.5rem;
-      padding: 1rem;
-      max-width: 90%;
-      animation: fadeIn 0.6s ease-in-out;
-    }
-
-    .chat-message.user {
-      background-color: #b6d3c6;
-      align-self: flex-end;
-    }
-
-    .chat-input {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
-
-    .chat-input input {
-      flex: 1;
-      padding: 0.8rem;
-      border-radius: 1rem;
-      border: none;
-      font-size: 1rem;
-    }
-
-    .chat-input button {
-      background-color: var(--color-secundario);
-      color: white;
-      border: none;
-      border-radius: 1rem;
-      padding: 0.8rem 1rem;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .formulario input, .formulario select {
-      width: 100%;
-      padding: 0.8rem;
-      border-radius: 1rem;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-      margin-bottom: 1rem;
-    }
-
-    .formulario button {
-      background-color: var(--color-primario);
-      color: white;
-      border: none;
-      padding: 0.8rem 1.2rem;
-      border-radius: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .version-footer {
-      font-size: 0.75rem;
-      color: #888;
-      margin-top: auto;
-      text-align: center;
-      padding-top: 1rem;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="chat-container" id="chat">
 
-    <!-- ACG: Mensaje de bienvenida inicial del chatbot -->
+    <!-- Mensaje inicial del bot -->
     <div class="chat-message">✨ Hola, soy <strong>ClanAI</strong>. ¿Cómo deseas que te llame?</div>
 
-    <!-- ACG: Formulario para recoger datos del usuario (alias, email, nivel) -->
+    <!-- Formulario inicial -->
     <div class="formulario">
       <input type="text" id="alias" placeholder="📝 Tu nombre o apodo" required />
       <input type="email" id="email" placeholder="📧 Tu correo electrónico" required />
@@ -128,101 +27,11 @@
       <button onclick="iniciarConversacion()">🚀 Iniciar viaje</button>
     </div>
 
-    <!-- ACG: Pie de página con información de versión y carga -->
+    <!-- Pie de página con versión -->
     <div class="version-footer" id="versionInfo"></div>
   </div>
 
-  <script>
-    // ACG: Paso actual de la conversación (controlado desde backend)
-    let paso = 0;
-
-    // ACG: Variables globales para los datos del formulario
-    let aliasGlobal = '';
-    let emailGlobal = '';
-    let nivelGlobal = '';
-
-    // ACG: Mostrar versión y fecha de carga en pie de página
-    const version = 'v1.0.0';
-    const now = new Date();
-    const fechaHora = now.toLocaleString();
-    document.getElementById('versionInfo').innerText = `🧠 ClanAI ${version} – Última carga: ${fechaHora}`;
-
-    // ACG: Inicia la conversación una vez el formulario está completo
-    async function iniciarConversacion() {
-      aliasGlobal = document.getElementById('alias').value.trim();
-      emailGlobal = document.getElementById('email').value.trim();
-      nivelGlobal = document.getElementById('nivel').value;
-
-      if (!aliasGlobal || !emailGlobal) {
-        alert('Por favor completa tu nombre y correo.');
-        return;
-      }
-
-      document.querySelector('.formulario').remove();
-      agregarMensaje(`👋 Hola, soy ${aliasGlobal} y quiero empezar el nivel ${nivelGlobal}.`, 'user');
-
-      await enviarAlBackend('');
-    }
-
-    // ACG: Enviar datos al webhook de n8n y recibir respuesta
-    async function enviarAlBackend(respuestaUsuario) {
-      const url = `https://n8n.serversnow.net/webhook/clanai-session-start?alias=${encodeURIComponent(aliasGlobal)}&email=${encodeURIComponent(emailGlobal)}&nivel=${encodeURIComponent(nivelGlobal)}&mensaje=${encodeURIComponent(respuestaUsuario)}&paso=${paso}`;
-
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-
-        const respuestaIA = data.message || '✨ Estoy aquí para ti.';
-        //const respuestaIA = data.message?.content || '✨ Estoy aquí para ti.';
-        console.log('Respuesta cruda del backend:', data);
-console.log('Mensaje IA:', data.message);
-
-        agregarMensaje(respuestaIA, 'bot');
-
-        // ACG: Si la sesión no ha terminado, continuar el flujo
-        if (!data.sesionTerminada) {
-          paso = data.paso ?? paso; // ACG: Actualiza el paso desde backend si viene incluido
-          crearInputRespuesta();
-        } else {   
-          agregarMensaje('🌀 Tu proceso ha terminado. Gracias por estar aquí.');
-        }
-      } catch (err) {
-        agregarMensaje('❌ Error de conexión. Intenta más tarde.');
-      }
-    }
-
-    // ACG: Agrega un mensaje (bot o usuario) al chat visual
-    function agregarMensaje(texto, tipo = 'bot') {
-      const chat = document.getElementById('chat');
-      const msg = document.createElement('div');
-      msg.className = `chat-message ${tipo === 'user' ? 'user' : ''}`;
-      msg.innerText = texto;
-      chat.insertBefore(msg, document.getElementById('versionInfo'));
-      chat.scrollTop = chat.scrollHeight;
-    }
-
-    // ACG: Crea campo de entrada para nueva respuesta del usuario
-    function crearInputRespuesta() {
-      const chat = document.getElementById('chat');
-      const inputDiv = document.createElement('div');
-      inputDiv.className = 'chat-input';
-      inputDiv.innerHTML = `
-        <input type="text" id="respuesta" placeholder="Escribe tu respuesta..." />
-        <button onclick="enviarRespuesta()">Enviar</button>
-      `;
-      chat.insertBefore(inputDiv, document.getElementById('versionInfo'));
-      chat.scrollTop = chat.scrollHeight;
-    }
-
-    // ACG: Captura y envía la respuesta del usuario al backend
-    async function enviarRespuesta() {
-      const valor = document.getElementById('respuesta').value;
-      if (!valor.trim()) return;
-
-      agregarMensaje(valor, 'user');
-      document.querySelector('.chat-input').remove();
-      await enviarAlBackend(valor);
-    }
-  </script>
+  <!-- Script principal -->
+  <script src="script.js"></script>
 </body>
 </html>
