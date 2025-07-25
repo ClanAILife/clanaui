@@ -3,11 +3,15 @@
   --color-primario: #c8945b;
   --color-secundario: #739f98;
   --color-texto: #5c3b1e;
+  --color-burbuja-bot: #f6ede2;
+  --color-burbuja-user: #b6d3c6;
+  --fuente: 'Poppins', sans-serif;
 }
 
+/* Base */
 body {
   margin: 0;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--fuente);
   background: var(--fondo-gradiente);
   color: var(--color-texto);
   display: flex;
@@ -15,14 +19,16 @@ body {
   align-items: center;
   height: 100vh;
   flex-direction: column;
+  padding: 1rem;
 }
 
+/* Chat container */
 .chat-container {
-  background: white;
+  background: #fff;
   border-radius: 2rem;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  max-width: 420px;
-  width: 95%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  max-width: 460px;
+  width: 100%;
   padding: 2rem;
   display: flex;
   flex-direction: column;
@@ -30,21 +36,27 @@ body {
   overflow-y: auto;
   max-height: 90vh;
   position: relative;
+  transition: box-shadow 0.3s ease;
 }
 
+/* Burbujas */
 .chat-message {
-  background-color: #f6ede2;
+  background-color: var(--color-burbuja-bot);
   border-radius: 1.5rem;
   padding: 1rem;
-  max-width: 90%;
+  max-width: 85%;
   animation: fadeIn 0.6s ease-in-out;
+  position: relative;
+  font-size: 0.95rem;
 }
 
 .chat-message.user {
-  background-color: #b6d3c6;
+  background-color: var(--color-burbuja-user);
   align-self: flex-end;
+  text-align: right;
 }
 
+/* Input usuario en sesión */
 .chat-input {
   display: flex;
   gap: 0.5rem;
@@ -55,8 +67,9 @@ body {
   flex: 1;
   padding: 0.8rem;
   border-radius: 1rem;
-  border: none;
+  border: 1px solid #ccc;
   font-size: 1rem;
+  outline: none;
 }
 
 .chat-input button {
@@ -67,15 +80,23 @@ body {
   padding: 0.8rem 1rem;
   font-weight: bold;
   cursor: pointer;
+  transition: background 0.3s ease;
 }
 
-.formulario input, .formulario select {
+.chat-input button:hover {
+  background-color: #5b857f;
+}
+
+/* Formulario inicial */
+.formulario input,
+.formulario select {
   width: 100%;
   padding: 0.8rem;
   border-radius: 1rem;
   border: 1px solid #ccc;
   font-size: 1rem;
   margin-bottom: 1rem;
+  background-color: #fffefc;
 }
 
 .formulario button {
@@ -86,17 +107,42 @@ body {
   border-radius: 1rem;
   font-weight: bold;
   cursor: pointer;
+  transition: background 0.3s ease;
 }
 
+.formulario button:hover {
+  background-color: #a26d3c;
+}
+
+/* Pie de versión */
 .version-footer {
   font-size: 0.75rem;
   color: #888;
   margin-top: auto;
   text-align: center;
   padding-top: 1rem;
+  border-top: 1px solid #eee;
 }
 
+/* Animación entrada */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .chat-container {
+    padding: 1.5rem;
+    border-radius: 1rem;
+  }
+
+  .chat-message {
+    font-size: 0.9rem;
+  }
+
+  .formulario button,
+  .chat-input button {
+    font-size: 0.95rem;
+  }
 }
