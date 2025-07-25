@@ -51,6 +51,7 @@ async function enviarAlBackend(respuestaUsuario) {
       agregarMensaje('🌀 Tu proceso ha terminado. Gracias por estar aquí.');
     }
   } catch (err) {
+    console.error('Error en la conexión:', err);
     agregarMensaje('❌ Error de conexión. Intenta más tarde.');
   }
 }
@@ -60,7 +61,7 @@ function agregarMensaje(texto, tipo = 'bot') {
   const chat = document.getElementById('chat');
   const msg = document.createElement('div');
   msg.className = `chat-message ${tipo === 'user' ? 'user' : ''}`;
-  msg.innerText = texto;
+  msg.innerHTML = texto.replace(/\n/g, '<br>');
   chat.insertBefore(msg, document.getElementById('versionInfo'));
   chat.scrollTop = chat.scrollHeight;
 }
@@ -82,6 +83,11 @@ function crearInputRespuesta() {
 async function enviarRespuesta() {
   const valor = document.getElementById('respuesta').value;
   if (!valor.trim()) return;
+
+  agregarMensaje(valor, 'user');
+  document.querySelector('.chat-input').remove();
+  await enviarAlBackend(valor);
+}
 
   agregarMensaje(valor, 'user');
   document.querySelector('.chat-input').remove();
