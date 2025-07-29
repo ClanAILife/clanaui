@@ -1,4 +1,4 @@
-// ACG: Paso actual de la conversación (solo referencia interna, controlado por backend)
+// ACG: Paso actual de la conversación (controlado desde backend)
 let paso = 0;
 
 // ACG: Variables globales para los datos del formulario
@@ -23,13 +23,9 @@ async function iniciarConversacion() {
     return;
   }
 
-  // ACG: Elimina el formulario inicial del DOM
   document.querySelector('.formulario').remove();
-
-  // ACG: Primer mensaje del usuario en el chat
   agregarMensaje(`👋 Hola, soy ${aliasGlobal} y quiero empezar el nivel ${nivelGlobal}.`, 'user');
 
-  // ACG: Enviar mensaje inicial vacío al backend
   await enviarAlBackend('');
 }
 
@@ -40,7 +36,6 @@ async function enviarAlBackend(respuestaUsuario) {
   try {
     const res = await fetch(url);
 
-    // ACG: Validación del código de respuesta HTTP
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
@@ -49,10 +44,9 @@ async function enviarAlBackend(respuestaUsuario) {
 
     console.log('✅ Respuesta cruda del backend:', data);
 
-    // ACG: Mensaje predeterminado en caso de error
     let respuestaIA = '✨ Estoy aquí para ti.';
 
-    // ACG: Validar estructura del mensaje recibido
+    // ACG: Validar si message existe y es texto
     if (data && typeof data.message === 'string' && data.message.trim() !== '') {
       respuestaIA = data.message;
     } else {
@@ -61,10 +55,8 @@ async function enviarAlBackend(respuestaUsuario) {
 
     console.log('📥 Mensaje IA procesado:', respuestaIA);
 
-    // ACG: Mostrar respuesta de la IA en el chat
     agregarMensaje(respuestaIA, 'bot');
 
-    // ACG: Si la sesión continúa, mostrar input
     if (!data.sesionTerminada) {
       paso = data.paso ?? paso;
       crearInputRespuesta();
@@ -73,12 +65,12 @@ async function enviarAlBackend(respuestaUsuario) {
     }
 
   } catch (err) {
-    console.error('❌ Error en la conexión o procesamiento:', err);
+    console.error('❌ Error en la conexión:', err);
     agregarMensaje('❌ Error de conexión. Intenta más tarde.');
   }
 }
 
-// ACG: Agrega un mensaje al chat visual (bot o usuario)
+// ACG: Agrega un mensaje (bot o usuario) al chat visual
 function agregarMensaje(texto, tipo = 'bot') {
   const chat = document.getElementById('chat');
   const msg = document.createElement('div');
@@ -100,7 +92,6 @@ function crearInputRespuesta() {
   chat.insertBefore(inputDiv, document.getElementById('versionInfo'));
   chat.scrollTop = chat.scrollHeight;
 
-  // ACG: Permitir enviar con tecla Enter
   inputDiv.querySelector('input').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -109,7 +100,7 @@ function crearInputRespuesta() {
   });
 }
 
-// ACG: Enviar respuesta del usuario al backend
+// ACG: Funcionalidad para enviar la respuesta del usuario al backend
 async function enviarRespuesta() {
   const input = document.getElementById('respuesta');
   const respuesta = input.value.trim();
@@ -123,3 +114,6 @@ async function enviarRespuesta() {
 // ACG: Exponer funciones globales usadas desde el HTML
 window.iniciarConversacion = iniciarConversacion;
 window.enviarRespuesta = enviarRespuesta;
+
+console.log("✅ script.js está corriendo correctamente");
+
