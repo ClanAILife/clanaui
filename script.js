@@ -37,10 +37,16 @@ async function enviarAlBackend(respuestaUsuario) {
     const res = await fetch(url);
     const data = await res.json();
 
-    const respuestaIA = data.message || '✨ Estoy aquí para ti.';
-    console.log('Respuesta cruda del backend:', data);
-    console.log('Mensaje IA:', data.message);
+    let respuestaIA = '✨ Estoy aquí para ti.';
+if (typeof data.message === 'string') {
+  respuestaIA = data.message;
+} else if (typeof data.message === 'object' && data.message.content) {
+  respuestaIA = data.message.content;
+}
 
+console.log('Respuesta cruda del backend:', data);
+console.log('Mensaje IA:', respuestaIA);
+    
     agregarMensaje(respuestaIA, 'bot');
 
     // ACG: Si la sesión no ha terminado, continuar el flujo
