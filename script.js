@@ -56,15 +56,16 @@ const url = `https://n8n.serversnow.net/webhook/clanai-session-start?alias=${enc
     console.log('📥 Mensaje IA procesado:', respuestaIA);
 
     agregarMensaje(respuestaIA, 'bot');
-
-    /*if (!data.sesionTerminada) {
+// ACG: Agrega mensaje adicional si la sesión no ha terminado (desactivado por ahora)
+    /*
+    if (!data.sesionTerminada) {
       paso = data.paso ?? paso;
       crearInputRespuesta();
     } else {
       agregarMensaje('🔀 Tu proceso ha terminado. Gracias por estar aquí.');
     }
-
-  }*/
+    */
+}
   catch (err) {
     console.error('❌ Error en la conexión:', err);
     agregarMensaje('❌ Error de conexión. Intenta más tarde.');
