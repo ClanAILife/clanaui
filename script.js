@@ -47,7 +47,9 @@ if (typeof data.message === 'string') {
 console.log('Respuesta cruda del backend:', data);
 console.log('Mensaje IA:', respuestaIA);
     
-    agregarMensaje(respuestaIA, 'bot');
+  
+    agregarMensaje(`🔹 Paso ${paso + 1}:<br>${respuestaIA}`, 'bot');
+
 
     // ACG: Si la sesión no ha terminado, continuar el flujo
     if (!data.sesionTerminada) {
