@@ -37,32 +37,29 @@ async function enviarAlBackend(respuestaUsuario) {
     const res = await fetch(url);
     const data = await res.json();
 
-    console.log('Respuesta cruda del backend:', data);
-
     let respuestaIA = '✨ Estoy aquí para ti.';
 
-    // ACG: Procesar respuesta del backend
     if (typeof data.message === 'string') {
       respuestaIA = data.message;
     } else if (typeof data.message === 'object') {
-      if ('content' in data.message) {
-        respuestaIA = data.message.content;
-      } else {
-        const firstKey = Object.keys(data.message)[0];
-        respuestaIA = data.message[firstKey] || respuestaIA;
+      const keys = Object.keys(data.message);
+      if (keys.length > 0) {
+        respuestaIA = data.message[keys[0]];
       }
     }
 
-    console.log('Mensaje IA procesado:', respuestaIA);
+    console.log('Respuesta cruda del backend:', data);
+    console.log('Mensaje IA:', respuestaIA);
+
     agregarMensaje(respuestaIA, 'bot');
 
-    // ACG: Si la sesión continúa, crear input para siguiente respuesta
     if (!data.sesionTerminada) {
       paso = data.paso ?? paso;
       crearInputRespuesta();
     } else {
       agregarMensaje('🔀 Tu proceso ha terminado. Gracias por estar aquí.');
     }
+
   } catch (err) {
     console.error('Error en la conexión:', err);
     agregarMensaje('❌ Error de conexión. Intenta más tarde.');
@@ -91,7 +88,6 @@ function crearInputRespuesta() {
   chat.insertBefore(inputDiv, document.getElementById('versionInfo'));
   chat.scrollTop = chat.scrollHeight;
 
-  // Enviar con Enter
   inputDiv.querySelector('input').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -114,5 +110,3 @@ async function enviarRespuesta() {
 // ACG: Exponer funciones globales usadas desde el HTML
 window.iniciarConversacion = iniciarConversacion;
 window.enviarRespuesta = enviarRespuesta;
-
-
