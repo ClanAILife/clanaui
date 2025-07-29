@@ -64,5 +64,55 @@ async function enviarAlBackend(respuestaUsuario) {
       agregarMensaje('🔀 Tu proceso ha terminado. Gracias por estar aquí.');
     }
   } catch (err) {
-    console.error('Error
+    console.error('Error en la conexión:', err);
+    agregarMensaje('❌ Error de conexión. Intenta más tarde.');
+  }
+}
+
+// ACG: Agrega un mensaje (bot o usuario) al chat visual
+function agregarMensaje(texto, tipo = 'bot') {
+  const chat = document.getElementById('chat');
+  const msg = document.createElement('div');
+  msg.className = `chat-message ${tipo === 'user' ? 'user' : ''}`;
+  msg.innerHTML = texto.replace(/\n/g, '<br>');
+  chat.insertBefore(msg, document.getElementById('versionInfo'));
+  chat.scrollTop = chat.scrollHeight;
+}
+
+// ACG: Crea campo de entrada para nueva respuesta del usuario
+function crearInputRespuesta() {
+  const chat = document.getElementById('chat');
+  const inputDiv = document.createElement('div');
+  inputDiv.className = 'chat-input';
+  inputDiv.innerHTML = `
+    <input type="text" id="respuesta" placeholder="Escribe tu respuesta..." />
+    <button onclick="enviarRespuesta()">Enviar</button>
+  `;
+  chat.insertBefore(inputDiv, document.getElementById('versionInfo'));
+  chat.scrollTop = chat.scrollHeight;
+
+  // Enviar con Enter
+  inputDiv.querySelector('input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      enviarRespuesta();
+    }
+  });
+}
+
+// ACG: Funcionalidad para enviar la respuesta del usuario al backend
+async function enviarRespuesta() {
+  const input = document.getElementById('respuesta');
+  const respuesta = input.value.trim();
+  if (!respuesta) return;
+
+  input.parentElement.remove();
+  agregarMensaje(respuesta, 'user');
+  await enviarAlBackend(respuesta);
+}
+
+// ACG: Exponer funciones globales usadas desde el HTML
+window.iniciarConversacion = iniciarConversacion;
+window.enviarRespuesta = enviarRespuesta;
+
 
