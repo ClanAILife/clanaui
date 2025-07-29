@@ -24,7 +24,7 @@ async function iniciarConversacion() {
   }
 
   document.querySelector('.formulario').remove();
-  agregarMensaje(`👋 Hola, soy ${aliasGlobal} y quiero empezar el nivel ${nivelGlobal}.`, 'user');
+  agregarMensaje(`👋 Hola, ${aliasGlobal}, elegiste empezar el nivel ${nivelGlobal}.`, 'user');
 
   await enviarAlBackend('');
 }
