@@ -1,5 +1,5 @@
 // ACG: Paso actual de la conversación (controlado desde backend)
-let paso = 0;
+//let paso = 0;
 
 // ACG: Variables globales para los datos del formulario
 let aliasGlobal = '';
@@ -31,8 +31,8 @@ async function iniciarConversacion() {
 
 // ACG: Enviar datos al webhook de n8n y recibir respuesta
 async function enviarAlBackend(respuestaUsuario) {
-  const url = `https://n8n.serversnow.net/webhook/clanai-session-start?alias=${encodeURIComponent(aliasGlobal)}&email=${encodeURIComponent(emailGlobal)}&nivel=${encodeURIComponent(nivelGlobal)}&mensaje=${encodeURIComponent(respuestaUsuario)}&paso=${paso}`;
-
+  //const url = `https://n8n.serversnow.net/webhook/clanai-session-start?alias=${encodeURIComponent(aliasGlobal)}&email=${encodeURIComponent(emailGlobal)}&nivel=${encodeURIComponent(nivelGlobal)}&mensaje=${encodeURIComponent(respuestaUsuario)}&paso=${paso}`;
+const url = `https://n8n.serversnow.net/webhook/clanai-session-start?alias=${encodeURIComponent(aliasGlobal)}&email=${encodeURIComponent(emailGlobal)}&nivel=${encodeURIComponent(nivelGlobal)}&mensaje=${encodeURIComponent(respuestaUsuario)}`;
   try {
     const res = await fetch(url);
 
@@ -57,14 +57,15 @@ async function enviarAlBackend(respuestaUsuario) {
 
     agregarMensaje(respuestaIA, 'bot');
 
-    if (!data.sesionTerminada) {
+    /*if (!data.sesionTerminada) {
       paso = data.paso ?? paso;
       crearInputRespuesta();
     } else {
       agregarMensaje('🔀 Tu proceso ha terminado. Gracias por estar aquí.');
     }
 
-  } catch (err) {
+  }*/
+  catch (err) {
     console.error('❌ Error en la conexión:', err);
     agregarMensaje('❌ Error de conexión. Intenta más tarde.');
   }
