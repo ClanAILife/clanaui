@@ -56,6 +56,8 @@ const url = `https://n8n.serversnow.net/webhook/clanai-session-start?alias=${enc
     console.log('📥 Mensaje IA procesado:', respuestaIA);
 
     agregarMensaje(respuestaIA, 'bot');
+    crearInputRespuesta(); // ACG: Activa campo de entrada para seguir conversando
+    
 // ACG: Agrega mensaje adicional si la sesión no ha terminado (desactivado por ahora)
     /*
     if (!data.sesionTerminada) {
