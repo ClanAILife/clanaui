@@ -1,6 +1,3 @@
-// ACG: Paso actual de la conversación (controlado desde backend)
-//let paso = 0;
-
 // ACG: Variables globales para los datos del formulario
 let aliasGlobal = '';
 let emailGlobal = '';
@@ -12,7 +9,9 @@ const now = new Date();
 const fechaHora = now.toLocaleString();
 document.getElementById('versionInfo').innerText = `🧠 ClanAI ${version} – Última carga: ${fechaHora}`;
 
-// ACG: Inicia la conversación una vez el formulario está completo
+/**
+ * ACG: Inicia la conversación una vez el formulario está completo
+ */
 async function iniciarConversacion() {
   aliasGlobal = document.getElementById('alias').value.trim();
   emailGlobal = document.getElementById('email').value.trim();
@@ -29,52 +28,51 @@ async function iniciarConversacion() {
   await enviarAlBackend('');
 }
 
-// ACG: Enviar datos al webhook de n8n y recibir respuesta
+/**
+ * ACG: Enviar datos al webhook de n8n y recibir respuesta
+ * @param {string} respuestaUsuario - texto enviado por el usuario
+ */
 async function enviarAlBackend(respuestaUsuario) {
-  //const url = `https://n8n.serversnow.net/webhook/clanai-session-start?alias=${encodeURIComponent(aliasGlobal)}&email=${encodeURIComponent(emailGlobal)}&nivel=${encodeURIComponent(nivelGlobal)}&mensaje=${encodeURIComponent(respuestaUsuario)}&paso=${paso}`;
-const url = `https://n8n.serversnow.net/webhook/clanai-session-start?alias=${encodeURIComponent(aliasGlobal)}&email=${encodeURIComponent(emailGlobal)}&nivel=${encodeURIComponent(nivelGlobal)}&mensaje=${encodeURIComponent(respuestaUsuario)}`;
+  const url = `https://n8n.serversnow.net/webhook/clanai-session-start?alias=${encodeURIComponent(aliasGlobal)}&email=${encodeURIComponent(emailGlobal)}&nivel=${encodeURIComponent(nivelGlobal)}&mensaje=${encodeURIComponent(respuestaUsuario)}`;
   try {
     const res = await fetch(url);
-
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
     const data = await res.json();
 
-    console.log('✅ Respuesta cruda del backend:', data);
+    // ACG: Debug en consola para inspección
+    console.log('🧾 Respuesta JSON completa recibida del backend:', JSON.stringify(data, null, 2));
 
     let respuestaIA = '✨ Estoy aquí para ti.';
 
-    // ACG: Validar si message existe y es texto
-    if (data && typeof data.message === 'string' && data.message.trim() !== '') {
-      respuestaIA = data.message;
+    // ACG: Soporte tanto para objeto plano como para array con un objeto
+    let mensaje = null;
+    if (Array.isArray(data) && data.length > 0) {
+      mensaje = data[0].message || data[0].mensaje_coach;
+    } else if (typeof data === 'object') {
+      mensaje = data.message || data.mensaje_coach;
+    }
+
+    if (typeof mensaje === 'string' && mensaje.trim() !== '') {
+      respuestaIA = mensaje;
     } else {
       console.warn('⚠️ No se encontró un mensaje válido en la respuesta:', data);
     }
 
     console.log('📥 Mensaje IA procesado:', respuestaIA);
-
     agregarMensaje(respuestaIA, 'bot');
-    crearInputRespuesta(); // ACG: Activa campo de entrada para seguir conversando
-    
-// ACG: Agrega mensaje adicional si la sesión no ha terminado (desactivado por ahora)
-    /*
-    if (!data.sesionTerminada) {
-      paso = data.paso ?? paso;
-      crearInputRespuesta();
-    } else {
-      agregarMensaje('🔀 Tu proceso ha terminado. Gracias por estar aquí.');
-    }
-    */
-}
-  catch (err) {
-    console.error('❌ Error en la conexión:', err);
-    agregarMensaje('❌ Error de conexión. Intenta más tarde.');
+    crearInputRespuesta();
+  } catch (err) {
+    console.error('❌ Error en la conexión o procesamiento:', err);
+    agregarMensaje('❌ Error de conexión o formato inesperado. Intenta más tarde.');
   }
 }
 
-// ACG: Agrega un mensaje (bot o usuario) al chat visual
+/**
+ * ACG: Agrega un mensaje al chat visual
+ * @param {string} texto - Contenido del mensaje
+ * @param {'bot' | 'user'} tipo - Remitente del mensaje
+ */
 function agregarMensaje(texto, tipo = 'bot') {
   const chat = document.getElementById('chat');
   const msg = document.createElement('div');
@@ -84,7 +82,9 @@ function agregarMensaje(texto, tipo = 'bot') {
   chat.scrollTop = chat.scrollHeight;
 }
 
-// ACG: Crea campo de entrada para nueva respuesta del usuario
+/**
+ * ACG: Crea campo de entrada para nueva respuesta del usuario
+ */
 function crearInputRespuesta() {
   const chat = document.getElementById('chat');
   const inputDiv = document.createElement('div');
@@ -104,7 +104,9 @@ function crearInputRespuesta() {
   });
 }
 
-// ACG: Funcionalidad para enviar la respuesta del usuario al backend
+/**
+ * ACG: Funcionalidad para enviar respuesta del usuario al backend
+ */
 async function enviarRespuesta() {
   const input = document.getElementById('respuesta');
   const respuesta = input.value.trim();
@@ -120,4 +122,3 @@ window.iniciarConversacion = iniciarConversacion;
 window.enviarRespuesta = enviarRespuesta;
 
 console.log("✅ script.js está corriendo correctamente");
-
